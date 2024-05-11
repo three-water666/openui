@@ -8,11 +8,12 @@ function host() {
 
 const openai = new OpenAI({
 	apiKey: 'sk-fake',
-	baseURL: `${host()}/v1`,
+	// baseURL: `${host()}/v1`,
+	baseURL: 'http://localhost:3040/v1',
 	dangerouslyAllowBrowser: true
 })
 
-export type Action = 'create' | 'refine';
+export type Action = 'create' | 'refine'
 interface CreateOptions {
 	model: string
 	systemPrompt: string
@@ -63,9 +64,9 @@ emoji: 🎉
 				const parts = image.toString().split(',')
 				imageUrl = parts.pop() ?? ''
 			}
-			const textImageRequirements = query ?
-				`The following are some special requirements: \n ${query}`
-				: '';
+			const textImageRequirements = query
+				? `The following are some special requirements: \n ${query}`
+				: ''
 			messages.push({
 				role: 'user',
 				content: [
@@ -81,7 +82,7 @@ emoji: 🎉
 					}
 				]
 			})
-		} else { 
+		} else {
 			messages.push({
 				role: 'user',
 				content: query
@@ -89,9 +90,11 @@ emoji: 🎉
 		}
 	} else {
 		// Annotation comments should like <!--FIX (1): make the image larger-->
-		const hasAnnotationComments = /<!--FIX (\(\d+\)): (.+)-->/g.test(html as string);
-		let userPrompt = hasAnnotationComments ? 'Address the FIX comments.': query
-		
+		const hasAnnotationComments = /<!--FIX (\(\d+\)): (.+)-->/g.test(
+			html as string
+		)
+		let userPrompt = hasAnnotationComments ? 'Address the FIX comments.' : query
+
 		const instructions = `Given the following HTML:\n\n${html}\n\n${userPrompt}`
 		console.log('Providing instructions:\n', instructions)
 		messages.push({
