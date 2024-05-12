@@ -8,8 +8,7 @@ function host() {
 
 const openai = new OpenAI({
 	apiKey: 'sk-fake',
-	// baseURL: `${host()}/v1`,
-	baseURL: 'http://localhost:3040/v1',
+	baseURL: `${host()}/v1`,
 	dangerouslyAllowBrowser: true
 })
 
