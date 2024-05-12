@@ -122,7 +122,9 @@ export default function HTMLAnnotator({
 	imageUploadRef
 }: HTMLAnnotatorProps) {
 	// only point to our local annotator in development / running locally otherwise use github pages
-	const iframeSrc = document.location.hostname.includes("127.0.0.1") ? 'http://127.0.0.1:7878' : 'https://wandb.github.io'
+	const iframeSrc = document.location.hostname.includes('127.0.0.1')
+		? 'http://127.0.0.1:7878'
+		: 'https://wandb.github.io'
 	const iframeRef = useRef<HTMLIFrameElement | null>(null)
 	const item = useAtomValue(historyAtomFamily({ id }))
 
@@ -156,6 +158,7 @@ export default function HTMLAnnotator({
 			setPreview(false)
 		}
 		if (iframeRef.current) {
+			// 父页面触发 hydrate 事件
 			iframeRef.current.contentWindow?.postMessage(
 				{
 					html: bufferedHTML,
@@ -193,6 +196,7 @@ export default function HTMLAnnotator({
 		const listener = (event: MessageEvent<IFrameEvent>) => {
 			// Only listen to events from our iframe
 			if (event.origin !== iframeSrc) return
+			// iframe页面加载触发 ready
 			if (event.data.action === 'ready') {
 				if (bufferedHTML) {
 					iframeRef.current?.contentWindow?.postMessage(
@@ -368,8 +372,9 @@ export default function HTMLAnnotator({
 								>
 									<svg
 										data-toggle-icon='moon'
-										className={`${!darkMode && 'hidden'
-											} inline-block h-3.5 w-3.5`}
+										className={`${
+											!darkMode && 'hidden'
+										} inline-block h-3.5 w-3.5`}
 										aria-hidden='true'
 										xmlns='http://www.w3.org/2000/svg'
 										fill='currentColor'
@@ -379,8 +384,9 @@ export default function HTMLAnnotator({
 									</svg>
 									<svg
 										data-toggle-icon='sun'
-										className={`${darkMode && 'hidden'
-											} inline-block h-3.5 w-3.5`}
+										className={`${
+											darkMode && 'hidden'
+										} inline-block h-3.5 w-3.5`}
 										aria-hidden='true'
 										xmlns='http://www.w3.org/2000/svg'
 										fill='currentColor'
@@ -456,8 +462,9 @@ export default function HTMLAnnotator({
 							title='HTML preview'
 							sandbox='allow-same-origin allow-scripts allow-forms allow-popups allow-modals'
 							ref={iframeRef}
-							className={`iframe-code mx-auto max-h-[60vh] w-full bg-background ${media === 'tablet' && 'max-w-lg'
-								} ${media === 'mobile' && 'max-w-sm'}`}
+							className={`iframe-code mx-auto max-h-[60vh] w-full bg-background ${
+								media === 'tablet' && 'max-w-lg'
+							} ${media === 'mobile' && 'max-w-sm'}`}
 							style={{ height: preview && !error ? '100%' : 0 }}
 							src={`${iframeSrc}/openui/index.html?buster=113`}
 						/>
@@ -465,20 +472,17 @@ export default function HTMLAnnotator({
 							// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 							(rendering || error ? (
 								<Scaffold loading error={error} />
+							) : screenshot ? (
+								<Screenshot />
 							) : (
-
-								screenshot ?
-									<Screenshot />
-									:
-									<FileUpload
-										onClick={() => imageUploadRef?.current?.click()}
-										onDropFile={(file) => {
-											const reader = new FileReader();
-											reader.onload = () =>
-												setScreenshot(reader.result as string);
-											reader.readAsDataURL(file as File);
-										}}
-									/>
+								<FileUpload
+									onClick={() => imageUploadRef?.current?.click()}
+									onDropFile={file => {
+										const reader = new FileReader()
+										reader.onload = () => setScreenshot(reader.result as string)
+										reader.readAsDataURL(file as File)
+									}}
+								/>
 							))}
 					</div>
 				</div>

@@ -53,8 +53,17 @@
 					type="text"
 					class="mt-2 w-[300px] rounded-md border border-zinc-200 px-4 py-2 text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-300"
 				/>
-				<button class="ml-2 mt-4 rounded-md bg-blue-500 p-2 text-white">
+				<button
+					class="ml-2 mt-4 rounded-md bg-blue-500 p-2 text-white"
+					id="submit"
+				>
 					Submit
+				</button>
+				<button
+					class="border-black-600 border-2 ml-2 mt-4 rounded-md border-solid bg-secondary p-2 text-secondary-foreground"
+					id="cancel"
+				>
+					Cancel
 				</button>
 			</div>
 		</div>
@@ -67,6 +76,7 @@
 			createInspector: true,
 			excludes: ['.no-select']
 		})
+		// 隐藏选择样式 border = 'none'
 		function clearInspector() {
 			const inspector = document.querySelector('.inspector-element')
 			if (inspector) {
@@ -91,6 +101,9 @@
 		document
 			.getElementById('wrapper')
 			.addEventListener('mouseleave', clearInspector)
+		// 重置 setInterval
+		// 每隔三秒检查鼠标是否移动，如果没有一定清除选择框样式
+		// 如果移动，moved改为false
 		function reset() {
 			interval = setInterval(() => {
 				if (!moved) {
@@ -103,6 +116,7 @@
 		reset()
 
 		// TODO: might not need this if we just refactor the click handler
+		// 重置选择框
 		function reinitInspector(target, inspector) {
 			var pos = target.getBoundingClientRect()
 			var scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -137,7 +151,7 @@
 					}
 				}
 			} else if (e.key === 'Enter') {
-				let sub = document.getElementById('prompt').querySelector('button')
+				let sub = document.getElementById('prompt').querySelector('#submit')
 				sub.click()
 			}
 		})
@@ -160,20 +174,24 @@
 				inspector.style.boxShadow = ''
 			}
 		})
+		// element 被点击的元素
 		window.theRoom.on('click', function (element, event) {
 			event.preventDefault()
 			event.stopPropagation()
 			clearInterval(interval)
 			// TODO: reinit inspector here if it's gone
+			// inspector theRoom自带的选择框
 			let inspector = document.querySelector('.inspector-element')
 			if (inspector.style.border === 'none') {
 				reinitInspector(element, inspector)
 			}
+			// 复制一个选择框 增加样式
 			let selected = inspector.cloneNode()
 			let color = colors[commentIdx]
 			selected.classList.add('selected')
 			selected.classList.add('no-select')
 			selected.classList.add('selected-' + commentIdx)
+			// 去掉inspector-element的样式
 			selected.classList.remove('inspector-element')
 			selected.dataset.commentIdx = commentIdx
 			selected.style.borderColor = color
@@ -181,6 +199,7 @@
 				// TODO: think about this one more
 				selected.style.zIndex = -1
 			}
+			// 显示弹窗并聚焦输入框
 			let prompt = document.getElementById('prompt')
 			prompt.dataset.commentIdx = commentIdx
 			prompt.classList.add('scale-100')
@@ -189,15 +208,39 @@
 			prompt.style.marginLeft = `-200px`
 			let input = prompt.querySelector('input')
 			input.focus()
-			prompt.querySelector('button').addEventListener('click', () => {
+			prompt.querySelector('#submit').addEventListener('click', () => {
+				if (!input.value) {
+					input.focus()
+					return
+				}
 				addComment(input.value)
 				input.value = ''
 				prompt.classList.remove('scale-100')
 			})
+			prompt.querySelector('#cancel').addEventListener('click', () => {
+				input.value = ''
+				prompt.classList.remove('scale-100')
+				clearInspector()
+				setTimeout(() => {
+					if (inspectorEnabled) {
+						window.theRoom.start()
+					}
+					reset()
+				}, 500)
+				document
+					.querySelectorAll(
+						'.selected-' + commentIdx + ', .fix-legend-' + commentIdx
+					)
+					.forEach(selected => {
+						selected.parentNode.removeChild(selected)
+					})
+			})
 			// TODO: make it clear "esc" cancels
 			document.body.append(selected)
+			// fix 显示选中元素类型
 			let fix = document.createElement('div')
 			fix.innerText = element.tagName
+			// 悬浮提示
 			fix.addEventListener('mouseenter', () => {
 				const cmt = document.createElement('div')
 				cmt.innerText = text
@@ -223,11 +266,14 @@
 			fix.style.top = Math.max(3, parseFloat(selected.style.top) - 10) + 'px'
 			fix.style.left = parseFloat(selected.style.left) + 5 + 'px'
 			document.body.append(fix)
+			// 停止theRoom 防止选择框和输入弹窗被选中 也会清除自带选择样式
 			window.theRoom.stop()
+			// 提交
 			function addComment(text) {
 				//let text = prompt('What would you like to fix about this?')
 				if (text) {
 					commentIdx += 1
+					// 根据用户输入生成修改注释
 					let c = document.createComment('FIX (' + commentIdx + '): ' + text)
 					element.parentNode.insertBefore(c, element)
 					window.parent.parent.postMessage(
@@ -244,11 +290,9 @@
 				selectedElements.push(element)
 				clearInspector()
 				setTimeout(() => {
-					if (inspectorEnabled) {
-						window.theRoom.start()
-					}
 					reset()
 				}, 500)
+				inspectorEnabled=false
 			}
 		})
 
