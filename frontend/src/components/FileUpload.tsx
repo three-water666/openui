@@ -1,20 +1,46 @@
 import { cn } from 'lib/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function FileUpload({
 	onDropFile,
 	onClick
 }: {
-	onDropFile: (file?: File) => void,
-	onClick: () => void;
+	onDropFile: (file?: File) => void
+	onClick: () => void
 }) {
 	const [dragging, setDragging] = useState(false)
+
+	useEffect(() => {
+		const handlePaste = (e: ClipboardEvent) => {
+			const items = e.clipboardData?.items
+			let file: File | null | undefined
+			if (items) {
+				for (const item of items) {
+					if (item.type.startsWith('image/')) {
+						file = item.getAsFile()
+						break
+					}
+				}
+				if (file) {
+					console.log('Pasted file type', file.type)
+					onDropFile(file)
+				} else {
+					alert('Only images can be pasted')
+				}
+			}
+		}
+
+		window.addEventListener('paste', handlePaste)
+		return () => {
+			window.removeEventListener('paste', handlePaste)
+		}
+	}, [onDropFile])
 
 	return (
 		<div
 			className='flex h-full items-center bg-background'
-			onKeyUp={(e) => {
-				if (e.key === 'Enter') { 
+			onKeyUp={e => {
+				if (e.key === 'Enter') {
 					onClick()
 				}
 			}}
@@ -55,12 +81,20 @@ export default function FileUpload({
 				e.preventDefault()
 			}}
 		>
+			{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
 			<label
+				htmlFor='file-input'
 				className='relative mx-auto h-64 w-64 cursor-pointer rounded-lg bg-white p-4 text-center text-zinc-600 shadow-lg dark:bg-zinc-800'
 			>
-				<div className='mb-5 text-6xl'>📸</div>
+				<div className='center'>
+					<img
+						src='/android-chrome-192x192.png'
+						className='inline-block w-24'
+						alt='OpenUI'
+					/>
+				</div>
 				<span className='text-lg'>
-					Drag a screenshot of UI or click me to upload one.
+					Drag a screenshot of UI, paste it, or click me to upload one.
 				</span>
 				<div className='mt-2 text-sm'>
 					You can also just explain what you want in the text box below.

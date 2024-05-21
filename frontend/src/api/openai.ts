@@ -23,7 +23,17 @@ interface CreateOptions {
 	action: Action
 }
 
-export const systemPrompt = `You're a frontend web developer that specializes in tailwindcss. Given a description or an image, generate HTML with tailwindcss. You should support both dark and light mode. It should render nicely on desktop, tablet, and mobile. Keep your responses concise and just return HTML that would appear in the <body> no need for <head>. Use placehold.co for placeholder images. If the user asks for interactivity, use modern ES6 javascript and native browser apis to handle events.`
+export const systemPrompt = `You're a frontend web developer that specializes in tailwindcss.
+Given a description or an image, generate HTML with tailwindcss. You should support
+both dark and light mode. It should render nicely on desktop, tablet, and mobile.
+Keep your responses concise and just return HTML that would appear in the <body>
+no need for <head> or <body>. Use placehold.co for placeholder images. If the user asks for
+interactivity, use modern ES6 javascript and native browser apis to handle events.
+
+Do not generate SVG's, instead use an image tag with an alt attribute of the same
+descriptive name, i.e.:
+
+<img aria-hidden="true" alt="check" src="/icons/check.svg" />`
 
 const GPT4_MAX_TOKENS = 4096
 
@@ -55,7 +65,7 @@ emoji: 🎉
 		if (image) {
 			// TODO: configurable
 			if (model.startsWith('gpt')) {
-				model = 'gpt-4-turbo-2024-04-09'
+				model = 'gpt-4o'
 			}
 			let imageUrl = image
 			// OpenAI wants a data url, ollama just wants base64 bytes
@@ -92,7 +102,9 @@ emoji: 🎉
 		const hasAnnotationComments = /<!--FIX (\(\d+\)): (.+)-->/g.test(
 			html as string
 		)
-		let userPrompt = hasAnnotationComments ? 'Address the FIX comments.' : query
+		const userPrompt = hasAnnotationComments
+			? 'Address the FIX comments.'
+			: query
 
 		const instructions = `Given the following HTML:\n\n${html}\n\n${userPrompt}`
 		console.log('Providing instructions:\n', instructions)

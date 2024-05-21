@@ -1,5 +1,9 @@
 # OpenUI
 
+<p align="center">
+  <img src="./assets/openui.png" width="150" alt="OpenUI" />
+</p>
+
 Building UI components can be a slog.  OpenUI aims to make the process fun, fast, and flexible.  It's also a tool we're using at [W&B](https://wandb.com) to test and prototype our next generation tooling for building powerful applications on top of LLM's.
 
 ## Overview
@@ -16,6 +20,12 @@ OpenUI let's you describe UI using your imagination, then see it rendered live. 
 
 You can also run OpenUI locally and use models available to [Ollama](https://ollama.com).  [Install Ollama](https://ollama.com/download) and pull a model like [CodeLlama](https://ollama.com/library/codellama), then assuming you have git and python installed:
 
+> **Note:** There's a .python-version file that specifies **openui** as the virtual env name.  Assuming you have pyenv and pyenv-virtualenv you can run the following from the root of the repository or just run `pyenv local 3.X` where X is the version of python you have installed.
+> ```bash
+> pyenv virtualenv 3.12.2 openui
+> pyenv local openui
+> ```
+
 ```bash
 git clone https://github.com/wandb/openui
 cd openui/backend
@@ -23,12 +33,26 @@ cd openui/backend
 pip install .
 # This must be set to use OpenAI models, find your api key here: https://platform.openai.com/api-keys
 export OPENAI_API_KEY=xxx
+# You may change the base url to use an OpenAI-compatible api by setting the OPENAI_BASE_URL environment variable
+# export OPENAI_BASE_URL=https://api.myopenai.com/v1
 python -m openui
+```
+
+## Groq
+
+To use the super fast [Groq](https://groq.com) models, set `GROQ_API_KEY` to your Groq api key which you can [find here](https://console.groq.com/keys).  To use one of the Groq models, click the settings icon in the sidebar and choose from the list:
+
+<img src="./assets/settings.jpeg" width="500" alt="Select Groq models" />
+
+You can also change the default base url used for Groq (if necessary), i.e.
+
+```bash
+export GROQ_BASE_URL=https://api.groq.com/openai/v1
 ```
 
 ### Docker Compose
 
-> DISCLAIMER: This is likely going to be very slow.  If you have a GPU you may need to change the tag of the `ollama` container to one that supports it.  If you're running on a Mac, follow the instructions above and run Ollama natively to take advantage of the M1/M2.
+> **DISCLAIMER:** This is likely going to be very slow.  If you have a GPU you may need to change the tag of the `ollama` container to one that supports it.  If you're running on a Mac, follow the instructions above and run Ollama natively to take advantage of the M1/M2.
 
 From the root directory you can run:
 
@@ -47,7 +71,7 @@ You can build and run the docker file manually from the `/backend` directory:
 
 ```bash
 docker build . -t wandb/openui --load
-docker run -p 7878:7878 -e OPENAI_API_KEY wandb/openui
+docker run -p 7878:7878 -e OPENAI_API_KEY -e GROQ_API_KEY wandb/openui
 ```
 
 Now you can goto [http://localhost:7878](http://localhost:7878)
@@ -77,6 +101,20 @@ The codespace installs ollama automaticaly and downloads the `llava` model.  You
 
 <img src="./assets/ollama.png" width="500" alt="Select Ollama models" />
 
+### Gitpod
+
+You can easily use Open UI via Gitpod, preconfigured with Open AI.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/wandb/openui)
+
+On launch Open UI is automatically installed and launched.
+
+Before you can use Gitpod:
+
+* Make sure you have a Gitpod account.
+* To use Open AI models set up the `OPENAI_API_KEY` environment variable in your Gitpod [User Account](https://gitpod.io/user/variables). Set the scope to `wandb/openui` (or your repo if you forked it).
+
+> NOTE: Other (local) models might also be used with a bigger Gitpod instance type. Required models are not preconfigured in Gitpod but can easily be added as documented above.
 
 ### Resources
 
