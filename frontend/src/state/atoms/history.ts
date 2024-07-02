@@ -28,6 +28,9 @@ export type FrameworkMap = {
 	[K in Framework]?: string
 }
 
+/**
+ * 历史项目接口
+ */
 export interface HistoryItem {
 	// TODO: Deprecate
 	prompt: string
@@ -43,6 +46,9 @@ export interface HistoryItem {
 	comments?: string[]
 }
 
+/**
+ * 章 的接口
+ */
 interface Chapter {
 	version: string
 	prompt: string
@@ -57,6 +63,9 @@ declare global {
 }
 
 // TODO: add image
+/**
+ * 每一个UI项目的类
+ */
 export class ItemWrapper {
 	public readonly item: HistoryItem
 

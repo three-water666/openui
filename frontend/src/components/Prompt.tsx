@@ -47,6 +47,7 @@ export default function Prompt({
 	imageUploadRef: React.RefObject<HTMLInputElement>
 }) {
 	const currentUI = useContext(CurrentUIContext)
+	// 当前UI的ID
 	const params = useParams()
 	const [searchParams, setSearchParams] = useSearchParams()
 
@@ -83,7 +84,9 @@ export default function Prompt({
 	const [example, setExample] = useState<string>(EXAMPLES[0])
 	const [bufferedExample, setBufferedExample] = useState<string>('')
 	const setHistoryIds = useSetAtom(historyIdsAtom)
+	// 大模型实时返回的markdown
 	const [liveMarkdown, setLiveMarkdown] = useState(item.markdown ?? '')
+	// 节流后的markdown
 	const throttledMD = useThrottle(liveMarkdown)
 	const newComponent = useCallback(
 		(prompt: string, clear = true) => {
@@ -242,6 +245,7 @@ export default function Prompt({
 	}, [dragging])
 
 	// Throttled updates of HTML when liveMarkdown changes
+	// 当liveMarkdown更新节流更新HTML
 	useEffect(() => {
 		try {
 			if (!liveMarkdown || params.id === 'new') {

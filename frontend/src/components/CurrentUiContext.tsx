@@ -28,6 +28,7 @@ export const CurrentUIProvider = ({
 	const [versionIdx] = useVersion(item)
 
 	const [uiState, setUiState] = useAtom(uiStateAtom)
+	// 节流后的HTML
 	const htmlToParse = useThrottle(
 		uiState.editedHTML || uiState.pureHTML || '',
 		1000
@@ -75,10 +76,16 @@ export const CurrentUIProvider = ({
 	// we do it all with this the event emitter.  One day we could switch
 	// to an actual reducer...
 	useEffect(() => {
+		/**
+		 * 处理 ui-state 时间，更加参数执行setUiState
+		 * @param ev
+		 */
 		const uiStateHandler = (ev: unknown) => {
 			const event = ev as {
+				// 带注释的HTML
 				annotatedHTML?: string
 				editedHTML?: string
+				// 纯HTML
 				pureHTML?: string
 				rendering?: boolean
 				renderedHTML?: HTMLAndJS

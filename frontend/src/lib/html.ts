@@ -255,6 +255,13 @@ export function escapeHTML(str: string) {
 	return div.innerHTML
 }
 
+/**
+ * 字符串转HTML
+ * @param html
+ * @param unsplash
+ * @param seed
+ * @returns
+ */
 export async function parseHTML(
 	html: string,
 	unsplash = false,

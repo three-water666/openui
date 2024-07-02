@@ -9,10 +9,20 @@ interface ParsedMarkdown {
 	html?: string
 }
 
+/**
+ * 构造prompt
+ * @param prompt
+ * @returns
+ */
 export function newChapter(prompt: string) {
 	return `\n\n---\nprompt: ${prompt}\n---\n\n`
 }
 
+/**
+ * 对html做一些fix
+ * @param html
+ * @returns
+ */
 export function fixHTML(html: string) {
 	// replace any gray styles with zinc, fix placeholder images
 	// TODO: this is kinda LAME
@@ -36,6 +46,13 @@ export function fixHTML(html: string) {
 	return fixed
 }
 
+/**
+ * 从 markdown中解析 名字 图标 HTML
+ * @param markdown
+ * @param version
+ * @param rendering
+ * @returns name emoji html
+ */
 // eslint-disable-next-line import/prefer-default-export
 export function parseMarkdown(
 	markdown: string,

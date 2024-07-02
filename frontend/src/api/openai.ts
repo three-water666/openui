@@ -78,6 +78,12 @@ Prefer using these colors when appropriate, for example:
 
 const GPT4_MAX_TOKENS = 4096
 
+/**
+ * 创建或者优化 向大模型输入prompt返回大模型的结果
+ * @param options 
+ * @param callback 
+ * @returns 
+ */
 export async function createOrRefine(
 	options: CreateOptions,
 	callback: (response: string) => void

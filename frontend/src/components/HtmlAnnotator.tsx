@@ -253,6 +253,7 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 	}, [inspectorEnabled, inspectorToggled])
 
 	// iframe content
+	// uiState.renderedHTML 更新，触发iframe更新
 	useEffect(() => {
 		if (!uiState.renderedHTML) {
 			return
@@ -261,6 +262,7 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 			// This is further insurance to prevent markdown
 			// TODO: is 30 right?
 			if (uiState.renderedHTML.html.length > 30) {
+				// 给iframe触发hydrate动作
 				iframeRef.current.contentWindow?.postMessage(
 					{
 						html: uiState.renderedHTML.html,

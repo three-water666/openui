@@ -8,6 +8,12 @@ import React, {
 import type { ItemWrapper } from 'state'
 
 const defaultInterval = 500
+/**
+ * 节流
+ * @param value 
+ * @param interval 
+ * @returns 
+ */
 export function useThrottle(value: unknown, interval = defaultInterval) {
 	const [throttledValue, setThrottledValue] = React.useState(value)
 	const lastUpdated = React.useRef<number | null>(null)
