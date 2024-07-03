@@ -22,6 +22,7 @@ except KeyError:
     print("Invalid environment, defaulting to running locally")
     ENV = Env.LOCAL
 
+# Path.home() 获取用户主目录路径
 default_db = Path.home() / ".openui" / "db.sqlite"
 default_db.parent.mkdir(exist_ok=True)
 DB = os.getenv("DATABASE", default_db)
@@ -56,6 +57,7 @@ CORS_ORIGINS = os.getenv(
 ).split(",")
 
 # Model providers
+# 读取环境变量值，如果没有，返回一个默认值
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "xxx")

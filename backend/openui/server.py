@@ -69,18 +69,22 @@ app = FastAPI(
     description="API for proxying LLM requests to different services",
 )
 
+# openai
 openai = AsyncOpenAI(base_url=config.OPENAI_BASE_URL, api_key=config.OPENAI_API_KEY)
 
+#litellm
 litellm = AsyncOpenAI(
     api_key=config.LITELLM_API_KEY,
     base_url=config.LITELLM_BASE_URL,
 )
 
+# groq
 if config.GROQ_API_KEY is not None:
     groq = AsyncOpenAI(base_url=config.GROQ_BASE_URL, api_key=config.GROQ_API_KEY)
 else:
     groq = None
 
+#ollama
 ollama = AsyncClient()
 ollama_openai = AsyncOpenAI(base_url=config.OLLAMA_HOST + "/v1", api_key="xxx")
 router = APIRouter()

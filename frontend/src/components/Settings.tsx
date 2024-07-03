@@ -182,6 +182,7 @@ export default function Settings({ trigger }: { trigger: JSX.Element }) {
 							) : undefined}
 							{data ? (
 								<SelectContent>
+									{/* dummy */}
 									{searchParams.get('dummy') ? (
 										<SelectGroup>
 											<SelectLabel>Dummy</SelectLabel>
@@ -189,6 +190,7 @@ export default function Settings({ trigger }: { trigger: JSX.Element }) {
 											<SelectItem value='dummy/bad'>Bad dummy</SelectItem>
 										</SelectGroup>
 									) : undefined}
+									{/* openai */}
 									{data.openai.length > 0 && (
 										<SelectGroup>
 											<SelectLabel>OpenAI</SelectLabel>
@@ -205,6 +207,7 @@ export default function Settings({ trigger }: { trigger: JSX.Element }) {
 												))}
 										</SelectGroup>
 									)}
+									{/* groq */}
 									{data.groq.length > 0 && (
 										<SelectGroup>
 											<SelectLabel>Groq</SelectLabel>
@@ -225,6 +228,7 @@ export default function Settings({ trigger }: { trigger: JSX.Element }) {
 											))}
 										</SelectGroup>
 									)}
+									{/* ollama */}
 									{data.ollama.length > 0 && (
 										<SelectGroup>
 											<SelectLabel>Ollama</SelectLabel>
