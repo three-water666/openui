@@ -3,8 +3,9 @@ from pathlib import Path
 import secrets
 from urllib.parse import urlparse
 from enum import Enum
+from dotenv import load_dotenv
 
-
+load_dotenv()
 class Env(Enum):
     LOCAL = 1
     PROD = 2
