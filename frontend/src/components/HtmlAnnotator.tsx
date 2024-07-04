@@ -94,9 +94,10 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 	const currentUI = useContext(CurrentUIContext)
 
 	// only point to our local annotator in development / running locally otherwise use github pages
-	const iframeSrc = /127\.0\.0\.1|localhost/.test(document.location.hostname)
-		? `http://${document.location.hostname}:${document.location.port === '5173' ? '7878' : document.location.port}`
-		: 'https://wandb.github.io'
+	// const iframeSrc = /127\.0\.0\.1|localhost/.test(document.location.hostname)
+	// 	? `http://${document.location.hostname}:${document.location.port === '5173' ? '7878' : document.location.port}`
+	// 	: 'https://wandb.github.io'
+	const iframeSrc = 'http://127.0.0.1:7878'
 	const iframeRef = useRef<HTMLIFrameElement | null>(null)
 	const annotatorRef = useRef<HTMLDivElement | null>(null)
 	const iframeId = useMemo(() => nanoid(8), [])
@@ -234,9 +235,9 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 				resizeObserver.observe(annotator)
 				return () => resizeObserver.unobserve(annotator)
 			}
-			return () => {}
+			return () => { }
 		}
-		return () => {}
+		return () => { }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoMedia, media])
 
@@ -341,7 +342,7 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 	const themeColor = useMemo(
 		() =>
 			(themes.find(theme => theme.name === uiTheme) ?? themes[0]).activeColor[
-				previewDarkMode === 'dark' ? 'dark' : 'light'
+			previewDarkMode === 'dark' ? 'dark' : 'light'
 			],
 		[uiTheme, previewDarkMode]
 	)
@@ -382,9 +383,8 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 					</div>
 				</div>
 				<div
-					className={`flex-shrink-0 py-0 pl-4 transition-all duration-500 ease-in-out ${
-						isCodeVisible ? 'sm:w-full md:w-full lg:w-1/2' : 'hidden w-0'
-					}`}
+					className={`flex-shrink-0 py-0 pl-4 transition-all duration-500 ease-in-out ${isCodeVisible ? 'sm:w-full md:w-full lg:w-1/2' : 'hidden w-0'
+						}`}
 				>
 					<CodeViewer id={id} code={uiState.editedHTML || uiState.pureHTML} />
 				</div>
@@ -472,7 +472,7 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 														{!adjective.endsWith('er') && 'More '}
 														{adjective.endsWith('er')
 															? adjective.charAt(0).toUpperCase() +
-																adjective.slice(1)
+															adjective.slice(1)
 															: adjective}
 													</Label>
 												</div>
@@ -671,11 +671,10 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 													// TODO: handle system dark mode
 													style={
 														{
-															'--theme-primary': `hsl(${
-																theme.activeColor[
-																	darkMode === 'dark' ? 'dark' : 'light'
-																]
-															})`
+															'--theme-primary': `hsl(${theme.activeColor[
+																darkMode === 'dark' ? 'dark' : 'light'
+															]
+																})`
 														} as React.CSSProperties
 													}
 												>
@@ -727,9 +726,8 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 								>
 									<svg
 										data-toggle-icon='moon'
-										className={`${
-											previewDarkMode === 'light' && 'hidden'
-										} inline-block h-3.5 w-3.5`}
+										className={`${previewDarkMode === 'light' && 'hidden'
+											} inline-block h-3.5 w-3.5`}
 										aria-hidden='true'
 										xmlns='http://www.w3.org/2000/svg'
 										fill='currentColor'
@@ -739,9 +737,8 @@ export default function HTMLAnnotator({ error, id }: HTMLAnnotatorProps) {
 									</svg>
 									<svg
 										data-toggle-icon='sun'
-										className={`${
-											previewDarkMode === 'dark' && 'hidden'
-										} inline-block h-3.5 w-3.5`}
+										className={`${previewDarkMode === 'dark' && 'hidden'
+											} inline-block h-3.5 w-3.5`}
 										aria-hidden='true'
 										xmlns='http://www.w3.org/2000/svg'
 										fill='currentColor'

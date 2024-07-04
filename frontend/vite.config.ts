@@ -51,9 +51,13 @@ export default defineConfig(({ mode }) => ({
 	},
 	server: {
 		proxy: {
-			'/v1': 'http://localhost:7878',
+			'/v1': {
+				target: 'http://127.0.0.1:7878'
+			},
 			// TODO: Currently having this proxy to /annotator, kinda lame
-			'/openui': 'http://localhost:7878'
+			'/openui': {
+				target: 'http://127.0.0.1:7878'
+			}
 		}
 	},
 	plugins: [
