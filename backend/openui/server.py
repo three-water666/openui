@@ -72,6 +72,9 @@ app = FastAPI(
 # openai
 openai = AsyncOpenAI(base_url=config.OPENAI_BASE_URL, api_key=config.OPENAI_API_KEY)
 
+# glm
+glm = AsyncOpenAI(base_url=config.GLM_BASE_URL, api_key=config.GLM_API_KEY)
+
 #litellm
 litellm = AsyncOpenAI(
     api_key=config.LITELLM_API_KEY,
@@ -149,6 +152,18 @@ async def chat_completions(
                 openai_stream_generator(response, input_tokens, user_id, multiplier),
                 media_type="text/event-stream",
             )
+        # GLM
+        elif data.get("model").startswith("glm"):
+            response: AsyncStream[
+                ChatCompletionChunk
+            ] = await glm.chat.completions.create(
+                **data,
+            )
+            multiplier = 20 
+            return StreamingResponse(
+                openai_stream_generator(response, input_tokens, user_id, multiplier),
+                media_type="text/event-stream",
+            )   
         # Groq Models
         elif data.get("model").startswith("groq/"):
             data["model"] = data["model"].replace("groq/", "")
@@ -404,6 +419,13 @@ async def get_openai_models():
         logger.warning("Couldn't connect to OpenAI at %s", config.OPENAI_BASE_URL)
         return []
 
+async def get_glm_models():
+    try:
+        return ["glm-4-0520"]
+    except Exception:
+        logger.warning("Couldn't connect to GLM at %s", config.GLM_BASE_URL)
+        return []
+
 
 async def get_ollama_models():
     try:
@@ -435,16 +457,20 @@ async def get_litellm_models():
 async def models():
     tasks = [
         get_openai_models(),
+        get_glm_models(),
         get_groq_models(),
         get_ollama_models(),
         get_litellm_models(),
     ]
-    openai_models, groq_models, ollama_models, litellm_models = await asyncio.gather(
+    # * 操作符用于将列表或元组中的元素解包
+    # asyncio.gather 并行执行这些操作
+    openai_models, glm_models, groq_models, ollama_models, litellm_models = await asyncio.gather(
         *tasks
     )
     return {
         "models": {
             "openai": openai_models,
+            "glm": glm_models,
             "groq": groq_models,
             "ollama": ollama_models,
             "litellm": litellm_models,

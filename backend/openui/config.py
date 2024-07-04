@@ -60,9 +60,15 @@ CORS_ORIGINS = os.getenv(
 # Model providers
 # 读取环境变量值，如果没有，返回一个默认值
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
+# openai
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "xxx")
+# 智谱GLM
+GLM_BASE_URL = os.getenv("GLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4/")
+GLM_API_KEY = os.getenv("GLM_API_KEY", "xxx")
+# groq
 GROQ_BASE_URL = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# litellm
 LITELLM_API_KEY = os.getenv("LITELLM_API_KEY", "xxx")
 LITELLM_BASE_URL = os.getenv("LITELLM_BASE_URL", "http://0.0.0.0:4000")

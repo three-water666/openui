@@ -207,6 +207,18 @@ export default function Settings({ trigger }: { trigger: JSX.Element }) {
 												))}
 										</SelectGroup>
 									)}
+									{/* glm */}
+									{data.glm.length > 0 && (
+										<SelectGroup>
+											<SelectLabel>GLM</SelectLabel>
+											{data.glm
+												.map(m => (
+													<SelectItem key={m} value={m}>
+														{slugToNiceName(m)}
+													</SelectItem>
+												))}
+										</SelectGroup>
+									)}
 									{/* groq */}
 									{data.groq.length > 0 && (
 										<SelectGroup>
