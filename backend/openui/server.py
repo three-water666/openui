@@ -578,18 +578,18 @@ async def render_audio(name):
 
 
 app.include_router(router)
-app.mount(
-    "/assets",
-    StaticFiles(directory=Path(__file__).parent / "dist" / "assets", html=True),
-    name="spa",
-)
-app.mount(
-    "/monacoeditorwork",
-    StaticFiles(
-        directory=Path(__file__).parent / "dist" / "monacoeditorwork", html=False
-    ),
-    name="spa",
-)
+# app.mount(
+#     "/assets",
+#     StaticFiles(directory=Path(__file__).parent / "dist" / "assets", html=True),
+#     name="spa",
+# )
+# app.mount(
+#     "/monacoeditorwork",
+#     StaticFiles(
+#         directory=Path(__file__).parent / "dist" / "monacoeditorwork", html=False
+#     ),
+#     name="spa",
+# )
 
 # we can serve our annotation iframe from the same domain in development
 if config.ENV != config.Env.PROD:
@@ -600,16 +600,16 @@ if config.ENV != config.Env.PROD:
     )
 
 
-@app.get("/{full_path:path}", include_in_schema=False)
-def spa(full_path: str):
-    dist_dir = Path(__file__).parent / "dist"
-    # TODO: hacky way to only serve index.html on root urls
-    files = [entry.name for entry in dist_dir.iterdir() if entry.is_file()]
-    if full_path in files:
-        return FileResponse(dist_dir / full_path)
-    if "." in full_path:
-        raise HTTPException(status_code=404, detail=f"Asset not found: {full_path}")
-    return HTMLResponse((dist_dir / "index.html").read_bytes())
+# @app.get("/{full_path:path}", include_in_schema=False)
+# def spa(full_path: str):
+#     dist_dir = Path(__file__).parent / "dist"
+#     # TODO: hacky way to only serve index.html on root urls
+#     files = [entry.name for entry in dist_dir.iterdir() if entry.is_file()]
+#     if full_path in files:
+#         return FileResponse(dist_dir / full_path)
+#     if "." in full_path:
+#         raise HTTPException(status_code=404, detail=f"Asset not found: {full_path}")
+#     return HTMLResponse((dist_dir / "index.html").read_bytes())
 
 
 def check_wandb_auth():
