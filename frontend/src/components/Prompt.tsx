@@ -81,6 +81,7 @@ export default function Prompt({
 	const model = useAtomValue(modelAtom)
 	const temperature = useAtomValue(temperatureAtom)
 	const saveHistory = useSaveHistory()
+	// 输入示例
 	const [example, setExample] = useState<string>(EXAMPLES[0])
 	const [bufferedExample, setBufferedExample] = useState<string>('')
 	const setHistoryIds = useSetAtom(historyIdsAtom)
@@ -88,10 +89,15 @@ export default function Prompt({
 	const [liveMarkdown, setLiveMarkdown] = useState(item.markdown ?? '')
 	// 节流后的markdown
 	const throttledMD = useThrottle(liveMarkdown)
+	/**
+	 * 新建的流程
+	 */
 	const newComponent = useCallback(
 		(prompt: string, clear = true) => {
 			// New state management
+			// 生成ID
 			const newId = nanoid()
+			//
 			historyAtomFamily({ id: newId, prompt, createdAt: new Date() })
 			setHistoryIds(prev => [newId, ...prev])
 			navigation(`/ai/${newId}?gen=1&clear=${clear}`)
@@ -102,8 +108,10 @@ export default function Prompt({
 	const [animate, setAnimate] = useState(false)
 	const [textareaHeight, setTextareaHeight] = useState<number | undefined>()
 
+	// 完善还是创建
 	const action: Action = isEditing ? 'refine' : 'create'
 	// Save our streamed markdown
+	// 保存大模型返回的markdown
 	const saveMarkdown = useCallback(
 		(final: string) => {
 			// The empty markdown check is rather important, without it we get into an
@@ -118,6 +126,9 @@ export default function Prompt({
 		},
 		[saveHistory, setItem]
 	)
+	/**
+	 *请求大模型
+	 */
 	const streamResponse = useCallback(
 		(query: string, existingHTML?: string, clearSession = false) => {
 			console.log('STREAMING RESPONSE:', query)
@@ -210,6 +221,8 @@ export default function Prompt({
 	// This effect is called when rendering a new component.
 	// CAUTION: mucking with the deps here is a recipe for disaster,
 	// we don't want this getting called twice in fast succession
+	// 这种效果是在渲染一个新的组件时出现的。
+	// 注意：在这里修改依赖项可能会导致灾难性的后果，我们不希望它在短时间内被连续调用两次。
 	useEffect(() => {
 		// TODO: not sure if we want this searchParam trash
 		const clear = searchParams.get('clear') === 'true'
@@ -285,14 +298,18 @@ export default function Prompt({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [throttledMD])
 
+	/**
+	 * 输入框提交或者回车
+	 */
 	const onSubmit = useCallback(
 		(e: React.FormEvent | React.KeyboardEvent) => {
+			// 关闭侧边栏
 			if (sidebarState === 'history') {
 				setSidebarState('closed')
 			}
 			setLiveMarkdown('')
 			e.preventDefault()
-
+			//
 			let query = queryRef.current?.value.trim() ?? ''
 			if (screenshot === '' && query === '') {
 				query = example
@@ -301,6 +318,7 @@ export default function Prompt({
 				return
 			}
 
+			// 如果是创建
 			if (action === 'create') {
 				// Keep the screenshot
 				// saveMarkdown('')

@@ -42,6 +42,7 @@ import { Button } from './ui/button'
 export default function Chat({ isShared = false }: { isShared: boolean }) {
 	const params = useParams()
 	const id = params.id ?? 'new'
+	// 新创建还是在已有的基础上完善
 	const [isEditing, setIsEditing] = useState(false)
 	const imageUploadRef = useRef<HTMLInputElement>(null)
 	const contentRef = useRef<HTMLDivElement>(null)

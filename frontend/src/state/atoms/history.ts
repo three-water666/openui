@@ -377,6 +377,9 @@ interface Param {
 	markdown?: string
 }
 export const historyIdsAtom = atom<string[]>(savedHist.history)
+/**
+ * 
+ */
 export const historyAtomFamily = atomFamily(
 	(param: Param) => {
 		const hist: HistoryItem = savedHist.historyMap[param.id] ?? { prompt: '' }

@@ -55,6 +55,8 @@ export const CurrentUIProvider = ({
 	}, [id, versionIdx, setUiState])
 
 	// Parse our HTML at most once per second
+	// 每秒最多解析一次HTML
+	// 大模型返回pureHTML改变或者编辑HTML时触发
 	useEffect(() => {
 		if (htmlToParse) {
 			// Only process images when we aren't rendering
@@ -77,17 +79,20 @@ export const CurrentUIProvider = ({
 	// to an actual reducer...
 	useEffect(() => {
 		/**
-		 * 处理 ui-state 时间，更加参数执行setUiState
+		 * 处理 ui-state 事件，根据参数执行setUiState
 		 * @param ev
 		 */
 		const uiStateHandler = (ev: unknown) => {
 			const event = ev as {
 				// 带注释的HTML
 				annotatedHTML?: string
+				// 被编辑的HTML
 				editedHTML?: string
-				// 纯HTML
+				// 纯HTML 从大模型结果解析出来的
 				pureHTML?: string
+				// 是否正在rendering
 				rendering?: boolean
+				// 已经render的HTML和JS
 				renderedHTML?: HTMLAndJS
 			}
 			// TODO: we might want to refactor this
