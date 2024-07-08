@@ -62,7 +62,7 @@ export default function NavBar() {
 					variant='ghost'
 					onClick={() => {
 						setHistoryState(historyState === 'history' ? 'closed' : 'history')
-						navigate('/ai/new')
+						// navigate('/ai/new')
 					}}
 				>
 					<Logo className='w-12' />

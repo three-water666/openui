@@ -56,9 +56,9 @@ function htmlToJSX(text: string) {
 	return `export default function Widget() {
     return (
 ${render
-	.split('\n')
-	.map(line => `        ${line}`)
-	.join('\n')}
+			.split('\n')
+			.map(line => `        ${line}`)
+			.join('\n')}
     )
 }`
 }
@@ -113,7 +113,7 @@ export default function CodeViewer({ id, code }: ViewerProps) {
 		<div className='code-syntax-wrapper'>
 			<div className='code-syntax relative rounded-lg border'>
 				<div className='grid w-full grid-cols-4 rounded-t-md border-b'>
-					<ul className='z-10 col-span-3 flex max-h-9 w-full overflow-y-hidden overflow-x-scroll rounded-tl-lg bg-background text-center text-sm font-medium text-gray-500 dark:text-gray-400'>
+					<ul className='z-10 col-span-3 flex max-h-9 w-full overflow-y-hidden rounded-tl-lg bg-background text-center text-sm font-medium text-gray-500 dark:text-gray-400'>
 						{frameworks.map((f, i) => (
 							<li key={f}>
 								<button

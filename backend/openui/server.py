@@ -69,18 +69,25 @@ app = FastAPI(
     description="API for proxying LLM requests to different services",
 )
 
+# openai
 openai = AsyncOpenAI(base_url=config.OPENAI_BASE_URL, api_key=config.OPENAI_API_KEY)
 
+# glm
+glm = AsyncOpenAI(base_url=config.GLM_BASE_URL, api_key=config.GLM_API_KEY)
+
+#litellm
 litellm = AsyncOpenAI(
     api_key=config.LITELLM_API_KEY,
     base_url=config.LITELLM_BASE_URL,
 )
 
+# groq
 if config.GROQ_API_KEY is not None:
     groq = AsyncOpenAI(base_url=config.GROQ_BASE_URL, api_key=config.GROQ_API_KEY)
 else:
     groq = None
 
+#ollama
 ollama = AsyncClient()
 ollama_openai = AsyncOpenAI(base_url=config.OLLAMA_HOST + "/v1", api_key="xxx")
 router = APIRouter()
@@ -145,6 +152,18 @@ async def chat_completions(
                 openai_stream_generator(response, input_tokens, user_id, multiplier),
                 media_type="text/event-stream",
             )
+        # GLM
+        elif data.get("model").startswith("glm"):
+            response: AsyncStream[
+                ChatCompletionChunk
+            ] = await glm.chat.completions.create(
+                **data,
+            )
+            multiplier = 20 
+            return StreamingResponse(
+                openai_stream_generator(response, input_tokens, user_id, multiplier),
+                media_type="text/event-stream",
+            )   
         # Groq Models
         elif data.get("model").startswith("groq/"):
             data["model"] = data["model"].replace("groq/", "")
@@ -400,6 +419,13 @@ async def get_openai_models():
         logger.warning("Couldn't connect to OpenAI at %s", config.OPENAI_BASE_URL)
         return []
 
+async def get_glm_models():
+    try:
+        return ["glm-4-0520"]
+    except Exception:
+        logger.warning("Couldn't connect to GLM at %s", config.GLM_BASE_URL)
+        return []
+
 
 async def get_ollama_models():
     try:
@@ -431,16 +457,20 @@ async def get_litellm_models():
 async def models():
     tasks = [
         get_openai_models(),
+        get_glm_models(),
         get_groq_models(),
         get_ollama_models(),
         get_litellm_models(),
     ]
-    openai_models, groq_models, ollama_models, litellm_models = await asyncio.gather(
+    # * 操作符用于将列表或元组中的元素解包
+    # asyncio.gather 并行执行这些操作
+    openai_models, glm_models, groq_models, ollama_models, litellm_models = await asyncio.gather(
         *tasks
     )
     return {
         "models": {
             "openai": openai_models,
+            "glm": glm_models,
             "groq": groq_models,
             "ollama": ollama_models,
             "litellm": litellm_models,
@@ -548,18 +578,18 @@ async def render_audio(name):
 
 
 app.include_router(router)
-app.mount(
-    "/assets",
-    StaticFiles(directory=Path(__file__).parent / "dist" / "assets", html=True),
-    name="spa",
-)
-app.mount(
-    "/monacoeditorwork",
-    StaticFiles(
-        directory=Path(__file__).parent / "dist" / "monacoeditorwork", html=False
-    ),
-    name="spa",
-)
+# app.mount(
+#     "/assets",
+#     StaticFiles(directory=Path(__file__).parent / "dist" / "assets", html=True),
+#     name="spa",
+# )
+# app.mount(
+#     "/monacoeditorwork",
+#     StaticFiles(
+#         directory=Path(__file__).parent / "dist" / "monacoeditorwork", html=False
+#     ),
+#     name="spa",
+# )
 
 # we can serve our annotation iframe from the same domain in development
 if config.ENV != config.Env.PROD:
@@ -570,16 +600,16 @@ if config.ENV != config.Env.PROD:
     )
 
 
-@app.get("/{full_path:path}", include_in_schema=False)
-def spa(full_path: str):
-    dist_dir = Path(__file__).parent / "dist"
-    # TODO: hacky way to only serve index.html on root urls
-    files = [entry.name for entry in dist_dir.iterdir() if entry.is_file()]
-    if full_path in files:
-        return FileResponse(dist_dir / full_path)
-    if "." in full_path:
-        raise HTTPException(status_code=404, detail=f"Asset not found: {full_path}")
-    return HTMLResponse((dist_dir / "index.html").read_bytes())
+# @app.get("/{full_path:path}", include_in_schema=False)
+# def spa(full_path: str):
+#     dist_dir = Path(__file__).parent / "dist"
+#     # TODO: hacky way to only serve index.html on root urls
+#     files = [entry.name for entry in dist_dir.iterdir() if entry.is_file()]
+#     if full_path in files:
+#         return FileResponse(dist_dir / full_path)
+#     if "." in full_path:
+#         raise HTTPException(status_code=404, detail=f"Asset not found: {full_path}")
+#     return HTMLResponse((dist_dir / "index.html").read_bytes())
 
 
 def check_wandb_auth():
