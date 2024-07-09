@@ -20,7 +20,10 @@ export interface HTMLAndJS {
 	js: Script[]
 	pureHTML: string
 }
-
+/**
+ * 移除注释节点
+ * @param element
+ */
 export function removeCommentNodes(element: HTMLElement) {
 	try {
 		// Get all child nodes of the current element
@@ -128,6 +131,12 @@ interface UnsplashImage {
 // TODO: consider making this persist
 const CACHE = new Map<string, Basic[]>()
 
+/**
+ * 获取随机图片
+ * @param image
+ * @param seed
+ * @returns
+ */
 async function getRandomPhoto(
 	image: HTMLImageElement,
 	seed: number
@@ -187,6 +196,10 @@ async function getRandomPhoto(
 	return undefined
 }
 
+/**
+ * 删除图片？
+ * @param images
+ */
 function deUnsplashImages(images: HTMLCollectionOf<HTMLImageElement>) {
 	// TODO: not sure if we really want this...
 	for (const image of images) {
@@ -199,6 +212,11 @@ function deUnsplashImages(images: HTMLCollectionOf<HTMLImageElement>) {
 	}
 }
 
+/**
+ * 处理图片
+ * @param images
+ * @param seed
+ */
 async function unsplashImages(
 	images: HTMLCollectionOf<HTMLImageElement>,
 	seed: number
@@ -235,7 +253,11 @@ async function unsplashImages(
 		}
 	}
 }
-
+/**
+ * 处理js
+ * @param dom
+ * @returns
+ */
 export function parseJs(dom: Document): Script[] {
 	const scripts = dom.querySelectorAll('script')
 	const scriptObs: Script[] = []
@@ -256,7 +278,7 @@ export function escapeHTML(str: string) {
 }
 
 /**
- * 字符串转HTML
+ * 字符串转HTML 返回 html js[] pureHTML
  * @param html
  * @param unsplash
  * @param seed

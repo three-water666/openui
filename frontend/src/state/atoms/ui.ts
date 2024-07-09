@@ -36,6 +36,7 @@ export const cleanUiState = {
 	error: undefined,
 	renderedHTML: undefined
 }
+// UI一系列状态
 export const uiStateAtom = atom<CurrentUIState>(cleanUiState)
 
 export class UIState {

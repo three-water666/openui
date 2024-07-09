@@ -15,6 +15,7 @@ export interface Image {
 	createdAt: Date
 }
 export const imageDB = new MiniDb<Image>({ name: 'images' })
+// 侧标栏状态
 export const historySidebarStateAtom = atom<'closed' | 'history' | 'versions'>(
 	'closed'
 )

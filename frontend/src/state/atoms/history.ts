@@ -100,6 +100,10 @@ export class ItemWrapper {
 		this.pureHTMLMemo = Array.from({ length: this.chapters.length })
 	}
 
+	/**
+	 * 从item.markdown构造chapters[]
+	 * @returns
+	 */
 	private parseChapters(): Chapter[] {
 		if (this.item.markdown) {
 			const chapters = []
@@ -165,6 +169,10 @@ export class ItemWrapper {
 		return []
 	}
 
+	/**
+	 * chapters返回markdown
+	 * @returns
+	 */
 	public chaptersToMarkdown(): string {
 		let versionOffset = 0
 		let lastVersionStr = '0'
@@ -209,6 +217,11 @@ export class ItemWrapper {
 	}
 
 	// TODO: not sure if this is working
+	/**
+	 * 得到版本
+	 * @param idx
+	 * @returns
+	 */
 	public version(idx = 0): string {
 		const idxOffset = this.chapters.filter(
 			(c, i) => i <= idx && c.version.indexOf('.') > 0
@@ -216,6 +229,11 @@ export class ItemWrapper {
 		return this.chapters[idx]?.version ?? `${idx - idxOffset}`
 	}
 
+	/**
+	 * 得到提示词
+	 * @param idx
+	 * @returns
+	 */
 	public prompt(idx = 0): string | undefined {
 		if (idx > this.latestVersion) {
 			return undefined
@@ -239,6 +257,13 @@ export class ItemWrapper {
 		return html
 	}
 
+	/**
+	 * html
+	 * @param idx
+	 * @param unsplash
+	 * @param rendering
+	 * @returns html js[] pureHTML
+	 */
 	public async html(
 		idx = 0,
 		unsplash = false,
@@ -265,6 +290,11 @@ export class ItemWrapper {
 		return undefined
 	}
 
+	/**
+	 * 删除章
+	 * @param versionIdx
+	 * @returns
+	 */
 	public deleteChapter(versionIdx: number): string {
 		this.chapters = this.chapters.filter((c, i) => i !== versionIdx)
 		const markdown = this.chaptersToMarkdown()
@@ -275,6 +305,13 @@ export class ItemWrapper {
 		return markdown
 	}
 
+	/**
+	 * html prompt version添加格式
+	 * @param html
+	 * @param prompt
+	 * @param version
+	 * @returns
+	 */
 	// eslint-disable-next-line class-methods-use-this, @typescript-eslint/class-methods-use-this
 	private withFrontmatter(
 		html: string,
@@ -284,6 +321,12 @@ export class ItemWrapper {
 		return `\n\n---\nprompt: ${prompt}\nversion: ${version}\n---\n\n${html}\n`
 	}
 
+	/**
+	 * 编辑章
+	 * @param html
+	 * @param versionIdx
+	 * @returns
+	 */
 	public editChapter(html: string, versionIdx: number): number {
 		const { latestPrompt, chapters, item, saveHistory } = this
 		let newVersionIdx = versionIdx
@@ -344,6 +387,7 @@ export class ItemWrapper {
 	}
 }
 
+// 已经保存的历史记录
 let savedHistValue
 if (typeof localStorage !== 'undefined') {
 	savedHistValue = localStorage.getItem('serializedHistory')
@@ -376,9 +420,10 @@ interface Param {
 	createdAt?: Date
 	markdown?: string
 }
+// 历史记录ID列表
 export const historyIdsAtom = atom<string[]>(savedHist.history)
 /**
- * 
+ *
  */
 export const historyAtomFamily = atomFamily(
 	(param: Param) => {
@@ -449,6 +494,7 @@ type Action =
 	| { type: 'deserialize'; value: string }
 	| { type: 'serialize'; callback: (value: string) => void }
 
+// 序列化历史
 export const serializeHistoryAtom = atom(
 	undefined,
 	(get, set, action: Action) => {
@@ -481,7 +527,10 @@ export const serializeHistoryAtom = atom(
 		}
 	}
 )
-
+/**
+ * 保存历史记录
+ * @returns
+ */
 export const useSaveHistory = () => {
 	const [, dispatch] = useAtom(serializeHistoryAtom)
 	return () => {
