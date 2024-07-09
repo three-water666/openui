@@ -62,6 +62,7 @@ export default function Prompt({
 	const html = wrappedItem.pureHTML(versionIdx)
 
 	const queryRef = useRef<HTMLTextAreaElement>(null)
+	// 定时器
 	const nextExampleRef = useRef<NodeJS.Timeout>()
 	const [screenshot, setScreenshot] = useAtom(screenshotAtom)
 	const [inspectorEnabled, setInspectorEnabled] = useAtom(inspectorEnabledAtom)
@@ -83,6 +84,7 @@ export default function Prompt({
 	const saveHistory = useSaveHistory()
 	// 输入示例
 	const [example, setExample] = useState<string>(EXAMPLES[0])
+	// 示例动画出现的文字的示例
 	const [bufferedExample, setBufferedExample] = useState<string>('')
 	const setHistoryIds = useSetAtom(historyIdsAtom)
 	// 大模型实时返回的markdown
@@ -105,7 +107,9 @@ export default function Prompt({
 		[navigation, setHistoryIds]
 	)
 	const [isFocused, setIsFocused] = useState(false)
+	// 刷新动画
 	const [animate, setAnimate] = useState(false)
+	// 输入框高度
 	const [textareaHeight, setTextareaHeight] = useState<number | undefined>()
 
 	// 完善还是创建
@@ -209,6 +213,9 @@ export default function Prompt({
 		]
 	)
 
+	/**
+	 * setExample设置随机例子
+	 */
 	const randomExample = useCallback((existingExample: string) => {
 		let ex = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)]
 		while (ex === existingExample) {
@@ -435,6 +442,9 @@ export default function Prompt({
 		return () => clearTimeout(nextExampleRef.current)
 	}, [randomExample, example, isEditing])
 
+	/**
+	 * 示例逐字出现效果
+	 */
 	useEffect(() => {
 		if (isEditing) {
 			setTextareaHeight(undefined)
@@ -559,7 +569,7 @@ export default function Prompt({
 						isEditing
 							? 'Ask for changes to the current UI'
 							: // eslint-disable-next-line unicorn/no-nested-ternary
-								screenshot
+							screenshot
 								? 'Describe the screenshot you uploaded (Optional)'
 								: bufferedExample
 					}
@@ -612,24 +622,24 @@ export default function Prompt({
 							<TooltipContent>Select elements in the HTML</TooltipContent>
 						</Tooltip>
 					) : // eslint-disable-next-line unicorn/no-nested-ternary
-					modelSupportsImages ? (
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button
-									className='mr-2 h-8 w-8 flex-none rounded-full border-none bg-transparent'
-									variant='outline'
-									size='icon'
-									type='button'
-									onClick={() => imageUploadRef.current?.click()}
-								>
-									<ImageIcon strokeWidth={1} className='h-5 w-5' />
-								</Button>
-							</TooltipTrigger>
-							<TooltipContent>
-								Upload a screenshot of a web page you want to replicate
-							</TooltipContent>
-						</Tooltip>
-					) : undefined}
+						modelSupportsImages ? (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										className='mr-2 h-8 w-8 flex-none rounded-full border-none bg-transparent'
+										variant='outline'
+										size='icon'
+										type='button'
+										onClick={() => imageUploadRef.current?.click()}
+									>
+										<ImageIcon strokeWidth={1} className='h-5 w-5' />
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									Upload a screenshot of a web page you want to replicate
+								</TooltipContent>
+							</Tooltip>
+						) : undefined}
 					{rendering ? (
 						<div className='rendering h-8 w-8 flex-none animate-spin rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500' />
 					) : (
