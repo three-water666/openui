@@ -76,13 +76,60 @@ Prefer using these colors when appropriate, for example:
 \`\`\`
 `
 
+export const systemPrompt_zh = `🎉 你好，TailwindCSS 大师！🌟
+
+你已经掌握了前端设计和 TailwindCSS 的艺术！你的任务是将详细的描述或引人注目的图片转换为使用 TailwindCSS 的精美 HTML。确保你的作品在黑暗模式和光明模式下都能无缝切换！你的设计应在所有设备上响应良好并适应——无论是桌面、平板电脑还是移动设备。
+
+设计指南：
+
+使用 placehold.co 作为占位符图像和描述性替代文本。
+对于交互元素，利用现代 ES6 JavaScript 和本机浏览器 API 来增强功能。
+受到 shadcn 的启发，我们提供以下颜色，能够处理光明和黑暗模式：
+\`\`\`css
+--background
+--foreground
+--primary
+--border
+--input
+--ring
+--primary-foreground
+--secondary
+--secondary-foreground
+--accent
+--accent-foreground
+--destructive
+--destructive-foreground
+--muted
+--muted-foreground
+--card
+--card-foreground
+--popover
+--popover-foreground
+\`\`\`
+
+在适当的情况下，优先使用这些颜色，例如：
+
+\`\`\`html
+<button class=\"bg-secondary text-secondary-foreground hover:bg-secondary/80\">点击我</button>
+<span class="text-muted-foreground">这是静音文本</span>
+\`\`\`
+
+实现规则：
+
+只实现 \`<body>\` 标签内的元素，不需要处理 \`<html>\` 或 \`<head>\` 标签。
+避免直接使用 SVG。相反，使用带有描述性标题作为 alt 属性的 \`<img>\` 标签，并在 placehold.co URL 中添加 .svg，例如：
+\`\`\`html
+<img aria-hidden="true" alt="magic-wand" src="/icons/24x24.svg?text=🪄" />
+\`\`\`
+`
+
 const GPT4_MAX_TOKENS = 4096
 
 /**
  * 创建或者优化 向大模型输入prompt返回大模型的结果
- * @param options 
- * @param callback 
- * @returns 
+ * @param options
+ * @param callback
+ * @returns
  */
 export async function createOrRefine(
 	options: CreateOptions,
@@ -93,13 +140,20 @@ export async function createOrRefine(
 	// Add instructions for frontmatter unless we're iterating on existing html
 	// Some models don't support this being in a separate system message so we append
 	if (!html) {
-		sp += `\n\nAlways start your response with frontmatter wrapped in ---.  Set name: with a 2 to 5 word description of the component. Set emoji: with an emoji for the component, i.e.:
+		// 		sp += `\n\nAlways start your response with frontmatter wrapped in ---.  Set name: with a 2 to 5 word description of the component. Set emoji: with an emoji for the component, i.e.:
+		// ---
+		// name: Fancy Button
+		// emoji: 🎉
+		// ---
+
+		// <button class="bg-blue-500 text-white p-2 rounded-lg">Click me</button>\n\n`
+		sp += `\n\n始终以前言开始你的响应，并用 --- 包裹。设置 name: 为组件的 2 到 5 个字的描述。设置 emoji: 为组件的表情符号，例如：
 ---
-name: Fancy Button
+name: 精致按钮
 emoji: 🎉
 ---
 
-<button class="bg-blue-500 text-white p-2 rounded-lg">Click me</button>\n\n`
+<button class="bg-blue-500 text-white p-2 rounded-lg">点击我</button>\n\n`
 	}
 	const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
 		{
@@ -187,6 +241,7 @@ emoji: 🎉
 		}
 	}
 
+	console.log('************llm-messages\n', messages)
 	const response = await openai.chat.completions.create({
 		model, // can change to "gpt-4" if you fancy
 		messages,
@@ -200,6 +255,7 @@ emoji: 🎉
 		markdown += part
 		callback(part)
 	}
+	console.log('************llm-markdown\n', markdown)
 	return markdown
 }
 

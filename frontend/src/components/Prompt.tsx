@@ -1,4 +1,4 @@
-import { convert, createOrRefine, systemPrompt, type Action } from 'api/openai'
+import { convert, createOrRefine, systemPrompt, systemPrompt_zh, type Action } from 'api/openai'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip'
 import { useThrottle, useVersion } from 'hooks'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
@@ -159,7 +159,8 @@ export default function Prompt({
 					query,
 					model,
 					action,
-					systemPrompt,
+					// systemPrompt,
+					systemPrompt: systemPrompt_zh,
 					html: clearSession ? undefined : existingHTML,
 					image: clearSession ? undefined : imageToUse,
 					temperature
